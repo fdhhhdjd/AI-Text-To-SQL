@@ -4,15 +4,11 @@
   <img src="./assets/dev.jpeg" alt="TàiHeo Dev Logo" width="180" />
 </p>
 
-<p align="center">
   <img src="./assets/1.jpg" width="500" />
   <img src="./assets/2.jpg" width="500" />
-</p>
 
-<p align="center">
   <img src="./assets/3.jpg" width="500" />
   <img src="./assets/4.jpg" width="500" />
-</p>
 
 
 ## Giới thiệu
