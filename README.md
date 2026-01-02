@@ -5,13 +5,13 @@
 </p>
 
 <p align="center">
-  <img src="./assets/1.jpg" width="200" />
-  <img src="./assets/2.jpg" width="200" />
+  <img src="./assets/1.jpg" width="300" />
+  <img src="./assets/2.jpg" width="300" />
 </p>
 
 <p align="center">
-  <img src="./assets/3.jpg" width="200" />
-  <img src="./assets/4.jpg" width="200" />
+  <img src="./assets/3.jpg" width="300" />
+  <img src="./assets/4.jpg" width="300" />
 </p>
 
 
