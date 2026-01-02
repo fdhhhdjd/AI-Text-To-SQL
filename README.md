@@ -1,4 +1,4 @@
-# Code Web Không Khó – AI SQL Assistant 🐗🤖
+# Code Web Không Khó – AI SQL Assistant 🤖
 
 <p align="center">
   <img src="./assets/dev.jpeg" alt="TàiHeo Dev Logo" width="180" />
