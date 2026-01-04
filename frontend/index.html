@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="vi" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SQL Assistant - Natural Language to PostgreSQL</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <!-- Left side: Brand & Logo -->
+            <div class="brand-section">
+                <div class="brand-logo">
+                    <img src="./logo.jpg" alt="Code Web Không Khó" class="channel-logo">
+                    <div class="brand-info">
+                        <div class="channel-name">Code Web Không Khó</div>
+                        <div class="app-name">
+                            <i class="fas fa-database"></i>
+                            <h1>SQL Assistant</h1>
+                            <span class="beta">BETA</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right side: Actions -->
+            <div class="header-actions">
+                <button id="themeToggle" class="btn-icon" title="Toggle theme">
+                    <i class="fas fa-moon"></i>
+                </button>
+                <button id="clearHistory" class="btn-secondary" title="Clear History">
+                    <i class="fas fa-trash"></i> Clear History
+                </button>
+                <button id="dbInfoBtn" class="btn-secondary">
+                    <i class="fas fa-info-circle"></i> DB Info
+                </button>
+            </div>
+        </header>
+
+        <main class="main-content">
+            <!-- Left Panel: Query Input & Results -->
+            <div class="left-panel">
+                <!-- Query Input -->
+                <div class="card">
+                    <div class="card-header">
+                        <h2><i class="fas fa-comment-dots"></i> Ask Your Database</h2>
+                        <div class="examples">
+                            <small>Try: "Show me the top 10 customers by total purchases"</small>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="query-input-container">
+                            <textarea 
+                                id="questionInput" 
+                                placeholder="Ask a question in natural language (e.g., 'How many orders were placed last month?')..."
+                                rows="3"
+                            ></textarea>
+                            <div class="input-actions">
+                                <label class="checkbox">
+                                    <input type="checkbox" id="explainCheckbox">
+                                    <span>Explain SQL</span>
+                                </label>
+                                <button id="sendQuery" class="btn-primary">
+                                    <i class="fas fa-paper-plane"></i> Generate SQL
+                                </button>
+                                <button id="advancedQuery" class="btn-success">
+                                    <i class="fas fa-robot"></i> Full Analysis
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Generated SQL -->
+                <div class="card">
+                    <div class="card-header">
+                        <h2><i class="fas fa-code"></i> Generated SQL</h2>
+                        <button id="copySql" class="btn-icon" title="Copy SQL">
+                            <i class="far fa-copy"></i>
+                        </button>
+                    </div>
+                    <div class="card-body">
+                        <pre id="sqlOutput"><code class="sql">-- Your SQL will appear here...</code></pre>
+                        <div class="sql-stats" id="sqlStats">
+                            <span><i class="fas fa-clock"></i> Time: <span id="executionTime">0.000s</span></span>
+                            <span><i class="fas fa-check-circle"></i> Status: <span id="queryStatus">Ready</span></span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Query Results -->
+                <div class="card">
+                    <div class="card-header">
+                        <h2><i class="fas fa-table"></i> Query Results</h2>
+                        <div class="result-actions">
+                            <button id="exportCsv" class="btn-icon" title="Export as CSV">
+                                <i class="fas fa-file-csv"></i>
+                            </button>
+                            <button id="toggleView" class="btn-icon" title="Toggle view">
+                                <i class="fas fa-exchange-alt"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="results-container">
+                            <div id="resultsTable" class="table-container">
+                                <table>
+                                    <thead>
+                                        <tr id="tableHeaders">
+                                            <th>Results will appear here</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="tableBody">
+                                        <!-- Results populated by JS -->
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div id="resultsJson" class="json-container" style="display: none;">
+                                <pre><code id="jsonOutput">{}</code></pre>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Panel: History & Explanation -->
+            <div class="right-panel">
+                <!-- Query History -->
+                <div class="card">
+                    <div class="card-header">
+                        <h2><i class="fas fa-history"></i> Query History</h2>
+                        <span class="badge" id="historyCount">0</span>
+                    </div>
+                    <div class="card-body">
+                        <div class="history-list" id="historyList">
+                            <div class="empty-state">
+                                <i class="fas fa-history fa-2x"></i>
+                                <p>Your query history will appear here</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SQL Explanation -->
+                <div class="card">
+                    <div class="card-header">
+                        <h2><i class="fas fa-lightbulb"></i> SQL Explanation</h2>
+                    </div>
+                    <div class="card-body">
+                        <div id="explanationContent" class="explanation-content">
+                            <div class="empty-state">
+                                <i class="fas fa-info-circle fa-2x"></i>
+                                <p>Enable "Explain SQL" to see breakdown of generated queries</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Database Info -->
+                <div class="card">
+                    <div class="card-header">
+                        <h2><i class="fas fa-database"></i> Database Info</h2>
+                        <button id="refreshDbInfo" class="btn-icon" title="Refresh">
+                            <i class="fas fa-sync-alt"></i>
+                        </button>
+                    </div>
+                    <div class="card-body">
+                        <div id="dbInfoContent">
+                            <div class="loading">
+                                <i class="fas fa-spinner fa-spin"></i> Loading database info...
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <div class="footer-content">
+                <div class="status-indicators">
+                    <span class="status-indicator" id="apiStatus">
+                        <span class="status-dot"></span> API: Connecting...
+                    </span>
+                    <span class="status-indicator" id="dbStatus">
+                        <span class="status-dot"></span> Database: Checking...
+                    </span>
+                </div>
+                <div class="footer-info">
+                    <div class="channel-credit">
+                        <span>Made with <i class="fas fa-heart" style="color: #f72585;"></i> by </span>
+                        <a href="#" class="channel-link">Code Web Không Khó</a>
+                    </div>
+                    <div class="app-version">
+                        <span>SQL Assistant v2.0.0 | Natural Language to PostgreSQL</span>
+                    </div>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <!-- Database Info Modal -->
+    <div id="dbInfoModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3><i class="fas fa-database"></i> Database Information</h3>
+                <button class="btn-icon close-modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div id="modalDbInfo">
+                    Loading database information...
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="./script.js"></script>
+</body>
+</html>
