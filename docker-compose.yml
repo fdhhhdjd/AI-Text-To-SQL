@@ -1,32 +1,52 @@
-version: '3.8'
+version: "3.8"
+
 services:
   postgres:
     image: postgres:16
+    container_name: sql-postgres
     environment:
-      POSTGRES_DB: chinook
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: password
+      # Database name
+      POSTGRES_DB: ${POSTGRES_DB}
+
+      # Database username
+      POSTGRES_USER: ${POSTGRES_USER}
+
+      # Database password
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    env_file:
+      .env
     ports:
-      - "5432:5432"
+      # Expose PostgreSQL to host
+      - "${POSTGRES_PORT}:5432"
     volumes:
+      # Persistent PostgreSQL data
       - sql-pgdata:/var/lib/postgresql/data
+
+      # Auto-run SQL init script on first startup
       - ./init.sql:/docker-entrypoint-initdb.d/init.sql
 
   backend:
     build: ./backend
+    container_name: sql-backend
     ports:
-      - "8000:8000"
+      # Expose FastAPI backend
+      - "${BACKEND_PORT}:8000"
     env_file:
+      # Load environment variables for backend app
       - ./backend/.env
     depends_on:
       - postgres
 
   frontend:
     image: nginx:alpine
+    container_name: sql-frontend
     ports:
-      - "8080:80"
+      # Expose frontend UI
+      - "${FRONTEND_PORT}:80"
     volumes:
+      # Serve static frontend files
       - ./frontend:/usr/share/nginx/html:ro
 
 volumes:
+  # Named volume for PostgreSQL data persistence
   sql-pgdata:
