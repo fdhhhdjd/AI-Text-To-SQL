@@ -77,17 +77,15 @@ Kết quả JSON
 ## Cấu trúc thư mục
 
 ```
-.
-├── app.py                # Backend FastAPI
-├── init.sql              # SQL khởi tạo database mẫu
-├── docker-compose.yml    # Chạy toàn bộ hệ thống
-├── Dockerfile            # Build backend
-├── requirements.txt      # Python dependencies
-├── index.html            # Giao diện demo
-├── style.css             # Giao diện
-├── script.js             # Logic frontend
-├── logo.jpg              # Logo dự án
-└── README.md
+app/
+├── main.py              # FastAPI app, middleware, lifespan
+├── config.py            # Env, logging, global variables
+├── database.py          # Database engine & schema logic
+├── ai.py                # Gemini AI logic (generate SQL)
+├── utils.py             # Helper functions (clean SQL)
+├── schemas.py           # Pydantic models
+├── routes.py            # API endpoints
+└── __init__.py
 ```
 
 ---
